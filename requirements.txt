@@ -1,0 +1,5 @@
+pandas
+Flask
+openpyxl
+requests
+Flask-Session
