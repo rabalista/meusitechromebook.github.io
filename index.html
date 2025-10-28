@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processador de Planilhas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background-color: #FF0000; /* Red for testing */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+        div {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        pre {
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Processador de Planilhas</h1>
+
+        <button onclick="uploadFile()">Carregar Planilha</button>
+        <input type="file" id="fileInput" accept=".xlsx, .xls">
+
+        <button onclick="showColumnSelection()">Separar por Colunas</button>
+        <div id="columnSelection" style="display:none;">
+            <h3>Selecione as Colunas:</h3>
+            <div id="columnCheckboxes"></div>
+            <button onclick="selectColumns()">Confirmar Colunas</button>
+        </div>
+
+        <button onclick="showMonthSelection()">Escolher Meses</button>
+        <div id="monthSelection" style="display:none;">
+            <h3>Selecione os Meses:</h3>
+            <div id="monthCheckboxes"></div>
+            <button onclick="selectMonths()">Confirmar Meses</button>
+        </div>
+
+        <button onclick="displayInfo()">Exibir Informações</button>
+        <div id="displayInfo" style="display:none;">
+            <h3>Informações da Planilha:</h3>
+            <pre id="infoContent"></pre>
+        </div>
+
+        <div id="message"></div>
+
+        <script>
+            async function uploadFile() {
+                const fileInput = document.getElementById('fileInput');
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById('message').innerText = 'Planilha carregada com sucesso!';
+                    displayColumns(result.columns);
+                    displayMonths(result.sheet_names);
+                } else {
+                    document.getElementById('message').innerText = 'Erro ao carregar planilha: ' + result.error;
+                }
+            }
+
+            function displayColumns(columns) {
+                const columnCheckboxes = document.getElementById('columnCheckboxes');
+                columnCheckboxes.innerHTML = '';
+                columns.forEach(col => {
+                    columnCheckboxes.innerHTML += `
+                        <input type="checkbox" id="col_${col}" value="${col}" checked>
+                        <label for="col_${col}">${col}</label><br>
+                    `;
+                });
+                document.getElementById('columnSelection').style.display = 'block';
+            }
+
+            async function selectColumns() {
+                const checkboxes = document.querySelectorAll('#columnCheckboxes input[type="checkbox"]:checked');
+                const selectedColumns = Array.from(checkboxes).map(cb => cb.value);
+
+                const response = await fetch('/select_columns', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ columns: selectedColumns }),
+                    credentials: 'include'
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById('message').innerText = result.message;
+                    document.getElementById('columnSelection').style.display = 'none';
+                } else {
+                    document.getElementById('message').innerText = 'Erro ao selecionar colunas: ' + result.error;
+                }
+            }
+
+            function displayMonths(sheet_names) {
+                const monthCheckboxes = document.getElementById('monthCheckboxes');
+                monthCheckboxes.innerHTML = '';
+                sheet_names.forEach(month => {
+                    monthCheckboxes.innerHTML += `
+                        <input type="checkbox" id="month_${month}" value="${month}" checked>
+                        <label for="month_${month}">${month}</label><br>
+                    `;
+                });
+                document.getElementById('monthSelection').style.display = 'block';
+            }
+
+            async function selectMonths() {
+                const checkboxes = document.querySelectorAll('#monthCheckboxes input[type="checkbox"]:checked');
+                const selectedMonths = Array.from(checkboxes).map(cb => cb.value);
+
+                const response = await fetch('/select_months', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ months: selectedMonths }),
+                    credentials: 'include'
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById('message').innerText = result.message;
+                    document.getElementById('monthSelection').style.display = 'none';
+                } else {
+                    document.getElementById('message').innerText = 'Erro ao selecionar meses: ' + result.error;
+                }
+            }
+
+            async function displayInfo() {
+                const response = await fetch('/display_info', {
+                    method: 'GET'
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById('infoContent').innerText = JSON.stringify(result.info, null, 2);
+                    document.getElementById('displayInfo').style.display = 'block';
+                    document.getElementById('message').innerText = 'Informações exibidas com sucesso!';
+                } else {
+                    document.getElementById('message').innerText = 'Erro ao exibir informações: ' + result.error;
+                }
+            }
+
+            function showColumnSelection() {
+                document.getElementById('columnSelection').style.display = 'block';
+                document.getElementById('monthSelection').style.display = 'none';
+                document.getElementById('displayInfo').style.display = 'none';
+            }
+
+            function showMonthSelection() {
+                document.getElementById('columnSelection').style.display = 'none';
+                document.getElementById('monthSelection').style.display = 'block';
+                document.getElementById('displayInfo').style.display = 'none';
+            }
+        </script>
+    </div>
+</body>
+</html>
