@@ -2240,3 +2240,68 @@
 2025-10-28 14:47:50,475 - INFO - 127.0.0.1 - - [28/Oct/2025 14:47:50] "GET /?ide_webview_request_time=1761671653710 HTTP/1.1" 200 -
 2025-10-28 14:47:50,506 - INFO - 127.0.0.1 - - [28/Oct/2025 14:47:50] "GET /?ide_webview_request_time=1761671653710 HTTP/1.1" 200 -
 2025-10-28 14:47:50,696 - INFO - 127.0.0.1 - - [28/Oct/2025 14:47:50] "[33mGET /@vite/client HTTP/1.1[0m" 404 -
+2025-10-28 15:10:09,508 - INFO - 127.0.0.1 - - [28/Oct/2025 15:10:09] "GET /?ide_webview_request_time=1761671653710 HTTP/1.1" 200 -
+2025-10-28 15:10:09,576 - INFO - 127.0.0.1 - - [28/Oct/2025 15:10:09] "GET /?ide_webview_request_time=1761671653710 HTTP/1.1" 200 -
+2025-10-28 15:10:09,678 - INFO - 127.0.0.1 - - [28/Oct/2025 15:10:09] "[33mGET /@vite/client HTTP/1.1[0m" 404 -
+2025-10-28 15:21:04,893 - INFO - 10.131.248.212 - - [28/Oct/2025 15:21:04] "GET / HTTP/1.1" 200 -
+2025-10-28 15:21:10,051 - DEBUG - Iniciando upload_file
+2025-10-28 15:21:10,163 - DEBUG - Arquivo carregado. Linhas do df_original_df: 74
+2025-10-28 15:21:10,164 - DEBUG - Conteúdo da sessão após upload: ['_permanent', 'excel_file_content', 'df_original_df', 'available_schools', 'selected_schools', 'selected_months', 'selected_columns', 'upload_test_data']
+2025-10-28 15:21:10,164 - DEBUG - upload_test_data na sessão após upload: dados_do_upload_persistidos
+2025-10-28 15:21:10,164 - DEBUG - Iniciando apply_filters
+2025-10-28 15:21:10,165 - DEBUG - DataFrame original carregado para filtragem. Linhas: 74
+2025-10-28 15:21:10,165 - DEBUG - df_display atualizado na sessão. Linhas: 74
+2025-10-28 15:21:10,166 - DEBUG - Finalizando apply_filters
+2025-10-28 15:21:10,172 - INFO - 10.131.248.212 - - [28/Oct/2025 15:21:10] "POST /upload HTTP/1.1" 200 -
+2025-10-28 15:21:11,932 - DEBUG - Iniciando select_schools
+2025-10-28 15:21:11,932 - DEBUG - Conteúdo da sessão em select_schools: ['_permanent', 'excel_file_content', 'df_original_df', 'available_schools', 'selected_schools', 'selected_months', 'selected_columns', 'upload_test_data', 'df_display']
+2025-10-28 15:21:11,932 - DEBUG - upload_test_data na sessão em select_schools: dados_do_upload_persistidos
+2025-10-28 15:21:11,932 - DEBUG - Escolas selecionadas: ['EEEFM SILVIO EGITO SOBRINHO']
+2025-10-28 15:21:11,932 - DEBUG - Iniciando apply_filters
+2025-10-28 15:21:11,933 - DEBUG - DataFrame original carregado para filtragem. Linhas: 74
+2025-10-28 15:21:11,933 - DEBUG - Escolas selecionadas: ['EEEFM SILVIO EGITO SOBRINHO']
+2025-10-28 15:21:11,933 - DEBUG - Após filtro de escolas. Linhas: 1
+2025-10-28 15:21:11,934 - DEBUG - df_display atualizado na sessão. Linhas: 1
+2025-10-28 15:21:11,934 - DEBUG - Finalizando apply_filters
+2025-10-28 15:21:11,934 - DEBUG - Após select_schools, df_display na sessão tem 1 linhas.
+2025-10-28 15:21:11,945 - INFO - 10.131.248.212 - - [28/Oct/2025 15:21:11] "POST /select_schools HTTP/1.1" 200 -
+2025-10-28 15:21:14,793 - DEBUG - Iniciando select_columns
+2025-10-28 15:21:14,793 - DEBUG - Conteúdo da sessão em select_columns: ['_permanent', 'excel_file_content', 'df_original_df', 'available_schools', 'selected_schools', 'selected_months', 'selected_columns', 'upload_test_data', 'df_display']
+2025-10-28 15:21:14,793 - DEBUG - Colunas selecionadas: ['TOTAL DE CHROMEBOOKS DISPONÍVEIS NAS ESCOLAS EM MARÇO\u2075']
+2025-10-28 15:21:14,793 - DEBUG - Iniciando apply_filters
+2025-10-28 15:21:14,794 - DEBUG - DataFrame original carregado para filtragem. Linhas: 74
+2025-10-28 15:21:14,794 - DEBUG - Escolas selecionadas: ['EEEFM SILVIO EGITO SOBRINHO']
+2025-10-28 15:21:14,794 - DEBUG - Após filtro de escolas. Linhas: 1
+2025-10-28 15:21:14,794 - DEBUG - Colunas selecionadas: ['TOTAL DE CHROMEBOOKS DISPONÍVEIS NAS ESCOLAS EM MARÇO\u2075']
+2025-10-28 15:21:14,795 - DEBUG - Após filtro de colunas. Colunas válidas: ['TOTAL DE CHROMEBOOKS DISPONÍVEIS NAS ESCOLAS EM MARÇO\u2075', 'ESCOLA']
+2025-10-28 15:21:14,795 - DEBUG - df_display atualizado na sessão. Linhas: 1
+2025-10-28 15:21:14,795 - DEBUG - Finalizando apply_filters
+2025-10-28 15:21:14,795 - DEBUG - Após select_columns, df_display na sessão tem 1 linhas.
+2025-10-28 15:21:14,799 - INFO - 10.131.248.212 - - [28/Oct/2025 15:21:14] "POST /select_columns HTTP/1.1" 200 -
+2025-10-28 15:21:16,962 - DEBUG - Iniciando select_columns
+2025-10-28 15:21:16,962 - DEBUG - Conteúdo da sessão em select_columns: ['_permanent', 'excel_file_content', 'df_original_df', 'available_schools', 'selected_schools', 'selected_months', 'selected_columns', 'upload_test_data', 'df_display']
+2025-10-28 15:21:16,962 - DEBUG - Colunas selecionadas: ['TOTAL DE CHROMEBOOKS DEVOLVIDOS À  ESCOLA EM MARÇO 2024\u2074', 'TOTAL DE CHROMEBOOKS DISPONÍVEIS NAS ESCOLAS EM MARÇO\u2075']
+2025-10-28 15:21:16,962 - DEBUG - Iniciando apply_filters
+2025-10-28 15:21:16,963 - DEBUG - DataFrame original carregado para filtragem. Linhas: 74
+2025-10-28 15:21:16,963 - DEBUG - Escolas selecionadas: ['EEEFM SILVIO EGITO SOBRINHO']
+2025-10-28 15:21:16,964 - DEBUG - Após filtro de escolas. Linhas: 1
+2025-10-28 15:21:16,964 - DEBUG - Colunas selecionadas: ['TOTAL DE CHROMEBOOKS DEVOLVIDOS À  ESCOLA EM MARÇO 2024\u2074', 'TOTAL DE CHROMEBOOKS DISPONÍVEIS NAS ESCOLAS EM MARÇO\u2075']
+2025-10-28 15:21:16,964 - DEBUG - Após filtro de colunas. Colunas válidas: ['TOTAL DE CHROMEBOOKS DEVOLVIDOS À  ESCOLA EM MARÇO 2024\u2074', 'TOTAL DE CHROMEBOOKS DISPONÍVEIS NAS ESCOLAS EM MARÇO\u2075', 'ESCOLA']
+2025-10-28 15:21:16,964 - DEBUG - df_display atualizado na sessão. Linhas: 1
+2025-10-28 15:21:16,964 - DEBUG - Finalizando apply_filters
+2025-10-28 15:21:16,965 - DEBUG - Após select_columns, df_display na sessão tem 1 linhas.
+2025-10-28 15:21:16,968 - INFO - 10.131.248.212 - - [28/Oct/2025 15:21:16] "POST /select_columns HTTP/1.1" 200 -
+2025-10-28 15:21:19,241 - DEBUG - Iniciando select_months
+2025-10-28 15:21:19,241 - DEBUG - Conteúdo da sessão em select_months: ['_permanent', 'excel_file_content', 'df_original_df', 'available_schools', 'selected_schools', 'selected_months', 'selected_columns', 'upload_test_data', 'df_display']
+2025-10-28 15:21:19,241 - DEBUG - Meses selecionados: ['julho']
+2025-10-28 15:21:19,241 - DEBUG - Iniciando apply_filters
+2025-10-28 15:21:19,242 - DEBUG - DataFrame original carregado para filtragem. Linhas: 74
+2025-10-28 15:21:19,242 - DEBUG - Meses selecionados: ['julho']
+2025-10-28 15:21:19,247 - INFO - 10.131.248.212 - - [28/Oct/2025 15:21:19] "[35m[1mPOST /select_months HTTP/1.1[0m" 500 -
+2025-10-28 15:21:20,402 - DEBUG - Iniciando display_info
+2025-10-28 15:21:20,402 - DEBUG - Conteúdo da sessão em display_info: ['_permanent', 'excel_file_content', 'df_original_df', 'available_schools', 'selected_schools', 'selected_months', 'selected_columns', 'upload_test_data', 'df_display']
+2025-10-28 15:21:20,403 - DEBUG - upload_test_data na sessão em display_info: dados_do_upload_persistidos
+2025-10-28 15:21:20,403 - DEBUG - df_display carregado para exibição. Linhas: 1
+2025-10-28 15:21:20,403 - DEBUG - Retornando as 5 primeiras linhas para exibição.
+2025-10-28 15:21:20,406 - INFO - 10.131.248.212 - - [28/Oct/2025 15:21:20] "POST /display_info HTTP/1.1" 200 -
+2025-10-28 15:21:31,131 - INFO - 127.0.0.1 - - [28/Oct/2025 15:21:31] "GET / HTTP/1.1" 200 -
