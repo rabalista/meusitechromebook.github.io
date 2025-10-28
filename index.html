@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Chromebooks - Escolas SRE Carapina -</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+            body {
+                background-color: #ADD8E6; /* Azul claro */
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh; /* Garante que o body ocupe a altura total da viewport */
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }
+            .container {
+                background-color: #6495ED; /* Azul mais escuro (Cornflower Blue) */
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                max-width: 100%; /* Alterado para 100% para alongar o quadro */
+                width: 100%;
+                margin: 20px auto; /* Adicionado para centralizar o container e dar margem superior */
+            }
+            img.brasao {
+                max-width: 150px;
+                margin-bottom: 20px;
+            }
+            table {
+                max-width: 100%; /* Garante que a tabela não exceda a largura do container */
+                overflow-x: auto; /* Adiciona scroll horizontal se a tabela for muito larga */
+                margin: 0 auto; /* Centraliza a tabela */
+            }
+            /* Estilos para o input de arquivo customizado */
+            .file-input-wrapper {
+                position: relative;
+                overflow: hidden;
+                display: inline-flex; /* Alterado para inline-flex para alinhar com o span e o botão */
+                align-items: center; /* Alinha verticalmente os itens dentro do wrapper */
+                margin-bottom: 10px; /* Espaçamento entre os botões */
+            }
+            .file-input-wrapper input[type=file] {
+                position: absolute;
+                left: 0;
+                top: 0;
+                opacity: 0;
+                font-size: 100px; /* Para cobrir o botão */
+                cursor: pointer;
+            }
+            .file-input-wrapper .btn-custom-file {
+                border: 1px solid #ccc;
+                display: inline-block;
+                padding: 6px 12px;
+                cursor: pointer;
+                background-color: #f0f0f0;
+                border-radius: 4px;
+            }
+            #selectedFileName {
+                margin-left: 10px;
+                margin-right: 10px; /* Adicionado para dar espaço entre o nome do arquivo e o botão de carregar */
+            }
+        </style>
+    </head>
+    <body>
+        <img src="https://cdn.es.gov.br/images/logo/governo/brasao/center/Brasao_Governo.png" alt="Brasão do Estado do Espírito Santo" class="brasao">
+        <div class="container">
+            <h1>Controle de Chromebooks - Escolas SRE Carapina -</h1>
+            <div class="file-input-wrapper">
+                <button class="btn-custom-file">Escolher o Arquivo</button>
+                <input type="file" id="excelFile" accept=".xls,.xlsx">
+            </div>
+            <span id="selectedFileName" style="margin-left: 10px;">Nenhum arquivo selecionado</span>
+            <button onclick="uploadFile()">Carregar o Arquivo</button>
+            
+            <h2>Selecione a(s) Escolas:</h2>
+        <select id="schoolSelect" multiple="multiple" style="width: 100%;"></select>
+        
+        <h2>Selecione o(s) Totais:</h2>
+        <select id="columnSelect" multiple="multiple" style="width: 100%;"></select>
+        
+        <h2>Selecione o Mês:</h2>
+        <select id="monthSelect" multiple="multiple" style="width: 100%;"></select>
+        <button onclick="displayInfo()">Exibir Informações</button>
+         <div id="infoDisplay" style="margin-top: 20px;"></div>
+       
+       <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+       <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+       <script>
+           let availableColumns = [];
+           let availableMonths = [];
+      
+           $(document).ready(function() {
+               $('#schoolSelect').select2();
+               $('#columnSelect').select2();
+               $('#monthSelect').select2();
+       
+               $('#schoolSelect').on('change', selectSchools);
+               $('#columnSelect').on('change', selectColumns);
+               $('#monthSelect').on('change', selectMonths);
+       
+               // Event listener for file input change
+               $('#excelFile').on('change', function() {
+                   const fileName = $(this).val().split('\\').pop();
+                   $('#selectedFileName').text(fileName ? fileName + ' - Agora clicar em carregar o Arquivo.' : 'Nenhum arquivo selecionado');
+               });
+           });
+       
+           async function uploadFile() {
+               const fileInput = document.getElementById('excelFile');
+               const file = fileInput.files[0];
+               if (!file) {
+                   // alert('Por favor, selecione um arquivo.');
+                   return;
+               }
+       
+               const formData = new FormData();
+               formData.append('file', file);
+       
+               try {
+                   const response = await fetch('/upload', {
+                       method: 'POST',
+                       body: formData
+                   });
+                   const data = await response.json();
+                   if (response.ok) {
+                       availableColumns = data.columns;
+                       const columnSelect = $('#columnSelect');
+                       columnSelect.empty();
+                       availableColumns.forEach(col => {
+                           columnSelect.append(new Option(col, col));
+                       });
+                       columnSelect.trigger('change');
+                       
+                       availableMonths = data.sheet_names;
+                       const monthSelect = $('#monthSelect');
+                       monthSelect.empty();
+                       availableMonths.forEach(month => {
+                           monthSelect.append(new Option(month, month));
+                       });
+                       monthSelect.trigger('change');
+       
+                       // Adicionar escolas se disponível
+                       if (data.schools) {
+                           const schoolSelect = $('#schoolSelect');
+                           schoolSelect.empty();
+                           data.schools.forEach(school => {
+                               schoolSelect.append(new Option(school, school));
+                           });
+                           schoolSelect.trigger('change'); // Notifica o Select2 sobre as mudanças
+                       }
+       
+                   } else {
+                       // alert('Erro ao carregar planilha: ' + data.error);
+                   }
+               } catch (error) {
+                   console.error('Erro:', error);
+                   // alert('Erro ao carregar planilha.');
+               }
+           }
+       
+           async function selectColumns() {
+               const selectedColumns = $('#columnSelect').val();
+        
+                if (selectedColumns.length === 0) {
+                    // alert('Por favor, selecione pelo menos uma coluna.');
+                    return;
+                }
+        
+                try {
+                    const response = await fetch('/select_columns', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ columns: selectedColumns })
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                        // alert(data.message + ' Colunas selecionadas: ' + data.selected_columns.join(', '));
+                        // Aqui você pode atualizar a UI para mostrar as colunas selecionadas ou o próximo passo
+                    } else {
+                        // alert('Erro ao selecionar colunas: ' + data.error);
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                    // alert('Erro ao selecionar colunas.');
+                }
+            }
+       
+           async function selectMonths() {
+               const selectedMonths = $('#monthSelect').val();
+        
+               if (selectedMonths.length === 0) {
+                   // alert('Por favor, selecione pelo menos um mês (aba).');
+                   return;
+               }
+        
+               try {
+                   const response = await fetch('/select_months', {
+                       method: 'POST',
+                       headers: {
+                           'Content-Type': 'application/json'
+                       },
+                       body: JSON.stringify({ months: selectedMonths })
+                   });
+                   const data = await response.json();
+                   if (response.ok) {
+                       // alert(data.message + ' Meses selecionados: ' + data.selected_months.join(', '));
+                       // Opcional: atualizar as colunas disponíveis se a seleção de meses mudar as colunas
+                       if (data.columns) {
+                           availableColumns = data.columns;
+                           const columnSelect = $('#columnSelect');
+                           columnSelect.empty();
+                           availableColumns.forEach(col => {
+                               columnSelect.append(new Option(col, col));
+                           });
+                           columnSelect.trigger('change');
+                       }
+                   } else {
+                       // alert('Erro ao selecionar meses: ' + data.error);
+                   }
+               } catch (error) {
+                   console.error('Erro:', error);
+                   // alert('Erro ao selecionar meses.');
+               }
+           }
+       
+           async function selectSchools() {
+               const selectedSchools = $('#schoolSelect').val();
+        
+               if (selectedSchools.length === 0) {
+                   // alert('Por favor, selecione pelo menos uma escola.');
+                   return;
+               }
+        
+               try {
+                   const response = await fetch('/select_schools', {
+                       method: 'POST',
+                       headers: {
+                            'Content-Type': 'application/json'
+                       },
+                       body: JSON.stringify({ schools: selectedSchools })
+                   });
+                   const data = await response.json();
+                   if (response.ok) {
+                       // alert(data.message + ' Escolas selecionadas: ' + data.selected_schools.join(', '));
+                   } else {
+                       // alert('Erro ao selecionar escolas: ' + data.error);
+                   }
+               } catch (error) {
+                   console.error('Erro:', error);
+                   // alert('Erro ao selecionar escolas.');
+               }
+           }
+       
+           function displayInfo() {
+                const selectedColumns = $('#columnSelect').val();
+                fetch('/display_info', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ columns: selectedColumns })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const infoDiv = document.getElementById('infoDisplay');
+                    if (data.error) {
+                        infoDiv.innerHTML = `<p>Erro: ${data.error}</p>`;
+                    } else {
+                        let html = '';
+                        html += '<h3 style="text-align: center; background-color: #6495ED;">Resultado da Pesquisa</h3>';
+                        html += '<table border="1" style="background-color: #ADD8E6; margin: 0 auto; max-width: 100%; overflow-x: auto;"><tr>';
+                        // Adiciona cabeçalhos das colunas
+                        Object.keys(data.info[0]).forEach(key => {
+                            html += `<th style="text-align: center;">${key}</th>`;
+                        });
+                        html += '</tr>';
+                        // Adiciona linhas de dados
+                        data.info.forEach(row => {
+                            html += '<tr>';
+                            Object.values(row).forEach(value => {
+                                html += `<td style="text-align: center;">${value}</td>`;
+                            });
+                            html += '</tr>';
+                        });
+                        html += '</table>';
+                        infoDiv.innerHTML = html;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('infoDisplay').innerHTML = `<p>Erro ao carregar dados: ${error}</p>`;
+                });
+            }
+    </script>
+    </body>
+    <footer>
+        <div style="text-align: center; margin-top: 20px;">
+            <p>Made IA - GTI - SRE Carapina -</p>
+        </div>
+    </footer>
+</html>
